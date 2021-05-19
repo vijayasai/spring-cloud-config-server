@@ -1,0 +1,43 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+spring:
+  cloud:
+    bus:
+      enabled: ${kafka.enabled:false}
+    config:
+      server:
+        git:
+          uri: ${git.url}
+          skipSslValidation: true
+          searchPaths: applications/{application}, applications/{application}/{profile}
+          default-label: ${git.default.label}
+          username: ${git.username}
+          password: ${git.password}
+          timeout: 30
+  security:
+    user:
+      name: ${config.username}
+      password: ${config.password}
+  kafka:
+    bootstrap-servers: ${kafka.servers:localhost:9092}
+    properties:
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: SCRAM-SHA-512
+        jaas:
+          config: org.apache.kafka.common.security.scram.ScramLoginModule required username='${kafka.username:}' password='${kafka.password:}';
+
+server:
+  port: 8443
+  ssl:
+    key-store-password: ${keystore.password}
+    key-store: ${keystore.location}
+
+logging:
+  file:
+    name: /opt/logs/test.log

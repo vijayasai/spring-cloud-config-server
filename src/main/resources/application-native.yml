@@ -1,0 +1,39 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+spring:
+  cloud:
+    bus:
+      enabled: ${kafka.enabled:false}
+    config:
+      server:
+        native:
+          search-locations: file:///workspace/configdata/applications/{application},file:///workspace/configdata/applications/{application}/{profile}
+  security:
+    user:
+      name: admin
+      password: admin
+  kafka:
+    bootstrap-servers: ${kafka.servers:localhost:9092}
+    properties:
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: SCRAM-SHA-512
+        jaas:
+          config: org.apache.kafka.common.security.scram.ScramLoginModule required username='${kafka.username:}' password='${kafka.password:}';
+
+server:
+  port: 8888
+  ssl:
+    enabled: false
+
+logging:
+  file:
+    name: C:/dev/temp/log.log
+    max-history: 7
+    max-size: 10MB
+  level:
+    root: info
